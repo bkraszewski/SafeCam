@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,6 +17,7 @@ import io.bkraszewski.safecam.R
 import io.bkraszewski.safecam.databinding.FragmentLoginBinding
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class LoginFragment : Fragment() {
 
@@ -32,10 +35,19 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vm.navigateToCamera.observe(viewLifecycleOwner, Observer {
+            hideKeyboard()
             NavHostFragment.findNavController(this).navigate(R.id.cameraFragment)
         })
 
         observePasswordSubmission()
+    }
+
+    private fun hideKeyboard() {
+        val view: View? = requireActivity().currentFocus
+        if (view != null) {
+            val imm: InputMethodManager? = getSystemService(requireActivity(), InputMethodManager::class.java)
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     private fun observePasswordSubmission() {

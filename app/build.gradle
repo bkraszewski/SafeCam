@@ -81,7 +81,7 @@ dependencies {
     // CRYPTO
     implementation "androidx.security:security-crypto:$rootProject.crypto_version"
 
-    def camerax_version = "1.0.0-beta03"
+    def camerax_version = "1.0.0-beta05"
     // CameraX core library using camera2 implementation
     implementation "androidx.camera:camera-camera2:$camerax_version"
     // CameraX Lifecycle Library
