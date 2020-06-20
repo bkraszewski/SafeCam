@@ -2,6 +2,7 @@ package io.bkraszewski.safecam.di
 
 import io.bkraszewski.safecam.feature.StringProvider
 import io.bkraszewski.safecam.feature.StringProviderImpl
+import io.bkraszewski.safecam.feature.camera.CameraViewModel
 import io.bkraszewski.safecam.feature.crypto.UserAuthenticator
 import io.bkraszewski.safecam.feature.crypto.UserAuthenticatorImpl
 import io.bkraszewski.safecam.feature.login.LoginViewModel
@@ -35,5 +36,9 @@ val viewModelModule = module(override = true) {
         LoginViewModel(
             get<UserAuthenticator>(),
             get<StringProvider>())
+    }
+
+    viewModel {
+        CameraViewModel()
     }
 }
