@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:id="@+id/loginLogo"
-        android:layout_height="wrap_content"
-        android:textSize="58sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textColor="@color/black"
-        android:text="@string/app_name" />
+    <data>
 
-    <TextView
+        <variable
+            name="vm"
+            type="io.bkraszewski.safecam.feature.login.LoginViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:id="@+id/loginPasswordHint"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textSize="20sp"
-        android:text="@string/login_enter_password"
-        app:layout_constraintTop_toBottomOf="@id/loginLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:id="@+id/loginPassword"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textSize="20sp"
-        android:inputType="textPassword"
-        android:imeOptions="actionDone"
-        app:layout_constraintTop_toBottomOf="@id/loginPasswordHint"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:id="@+id/loginLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/app_name"
+            android:textColor="@color/black"
+            android:textSize="58sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/loginPasswordHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/login_enter_password"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginLogo" />
+
+        <EditText
+            android:id="@+id/loginPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:text="@={vm.password}"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginPasswordHint" />
+
+        <TextView
+            android:id="@+id/loginPasswordError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@{vm.passwordError}"
+            android:textColor="@color/login_error"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loginPassword"
+            tools:text="@string/login_wrong_password" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

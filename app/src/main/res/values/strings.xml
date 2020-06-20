@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SafeCam</string>
     <string name="login_enter_password">Please enter your password</string>
+    <string name="login_wrong_password">Wrong Password!</string>
 </resources>

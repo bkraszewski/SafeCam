@@ -1,19 +1,27 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    buildFeatures.dataBinding = true
+    buildFeatures.viewBinding = true
+
     defaultConfig {
         applicationId "io.bkraszewski.safecam"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     buildTypes {
@@ -34,6 +42,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.7'
 
     //koin
     implementation "org.koin:koin-android:$rootProject.koin_version"
@@ -56,4 +68,7 @@ dependencies {
     // NAV
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.nav_version"
+
+    // CRYPTO
+    implementation "androidx.security:security-crypto:$rootProject.crypto_version"
 }
