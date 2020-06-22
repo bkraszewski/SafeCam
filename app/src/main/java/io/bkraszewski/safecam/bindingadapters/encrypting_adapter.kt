@@ -3,6 +3,7 @@ package io.bkraszewski.safecam.bindingadapters
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import io.bkraszewski.safecam.feature.browser.SecureFile
 
 object EncryptingAdapter{
@@ -12,6 +13,7 @@ object EncryptingAdapter{
     fun loadEncrypted(imageView: ImageView, secureFile: SecureFile){
         Glide.with(imageView.context)
             .load(secureFile)
-            .into(imageView);
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(imageView)
     }
 }

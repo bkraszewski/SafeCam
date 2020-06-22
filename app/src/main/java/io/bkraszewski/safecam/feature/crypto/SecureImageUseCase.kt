@@ -3,8 +3,9 @@ package io.bkraszewski.safecam.feature.crypto
 import android.content.Context
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
-import io.bkraszewski.safecam.R
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 interface SecureImageUseCase {
     fun secureImage(inputImagePath: String): String
@@ -31,16 +32,16 @@ class SecureImageUseCaseImpl(
 
             val bytes: ByteArray = input.readBytes()
 
-            encryptedFile.openFileOutput().bufferedWriter().use {
-                for (byte in bytes) {
-                    it.write(byte.toInt())
-                }
-            }
+            val fis = FileInputStream(input)
+
+            val fos = encryptedFile.openFileOutput()
+            fis.copyTo(fos)
+
 
         } catch (ex: Exception) {
             ex.printStackTrace()
         } finally {
-            input.delete()
+            //input.delete()
         }
 
         return output.absolutePath

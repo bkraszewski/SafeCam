@@ -11,9 +11,7 @@ import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoader.LoadData
 import com.bumptech.glide.signature.ObjectKey
 import io.bkraszewski.safecam.feature.browser.SecureFile
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.nio.ByteBuffer
 
 
@@ -72,9 +70,11 @@ class ImageDecryptorImpl(
             EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
         ).build()
 
+        //val fis = FileInputStream(File(imageUrl))
+
         val fis = encryptedFile.openFileInput()
         val bos = ByteArrayOutputStream()
-        val buf = ByteArray(1024)
+        val buf = ByteArray(DEFAULT_BUFFER_SIZE)
 
         try {
             var readNum: Int
