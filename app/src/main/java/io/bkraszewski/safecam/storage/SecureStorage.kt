@@ -2,6 +2,8 @@ package io.bkraszewski.safecam.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 
@@ -9,6 +11,7 @@ import androidx.security.crypto.MasterKeys
 interface SecureStorage{
     fun setPassword(password: String)
     fun getPassword(): String
+    fun getKeySpec(): KeyGenParameterSpec
 }
 
 class SecureStorageImpl(
@@ -33,6 +36,16 @@ class SecureStorageImpl(
     }
 
     override fun getPassword(): String = sharedPreferences.getString(PASSWORD, "")!!
+
+    override fun getKeySpec(): KeyGenParameterSpec {
+        return KeyGenParameterSpec.Builder(
+            getPassword(),
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(256)
+            .build()
+    }
 
     companion object{
         const val PASSWORD = "password"

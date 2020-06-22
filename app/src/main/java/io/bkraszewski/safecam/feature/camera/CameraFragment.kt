@@ -3,6 +3,7 @@ package io.bkraszewski.safecam.feature.camera
 import android.Manifest
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +46,7 @@ class CameraFragment : Fragment() {
     private var camera: Camera? = null
 
     private lateinit var cameraExecutor: ExecutorService
+    private val handler = Handler()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         container?.removeAllViews()
@@ -82,7 +84,7 @@ class CameraFragment : Fragment() {
         Dexter.withActivity(requireActivity())
             .withPermissions(Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object: MultiplePermissionsListener{
+            .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (!report.areAllPermissionsGranted()) {
                         toast(R.string.camera_permission_denied)
@@ -114,7 +116,7 @@ class CameraFragment : Fragment() {
                 .build()
 
             imageCapture = ImageCapture.Builder()
-                //.setTargetRotation(requireView().display.rotation)
+                .setTargetRotation(requireView().display.rotation)
                 .build()
 
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
@@ -148,14 +150,14 @@ class CameraFragment : Fragment() {
             outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
             override fun onError(exc: ImageCaptureException) {
                 Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                toast("Error saving image")
+                handler.post { toast("Error saving image") }
             }
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
                 val msg = "Photo capture succeeded: $savedUri"
                 vm.onImageCaptured(savedUri)
-                toast(msg)
+                handler.post { toast(msg) }
             }
         })
     }
@@ -168,6 +170,7 @@ class CameraFragment : Fragment() {
         super.onDestroyView()
 
         cameraExecutor.shutdown()
+        handler.removeCallbacksAndMessages(null)
 
     }
 

@@ -4,4 +4,5 @@
     <string name="login_wrong_password">Wrong Password!</string>
     <string name="camera_permission_denied">App require permissions!</string>
     <string name="camera_allow_permission">Allow</string>
+    <string name="login_login">Login</string>
 </resources>

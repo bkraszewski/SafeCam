@@ -11,6 +11,7 @@ import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoader.LoadData
 import com.bumptech.glide.signature.ObjectKey
 import io.bkraszewski.safecam.feature.browser.SecureFile
+import io.bkraszewski.safecam.storage.SecureStorage
 import java.io.*
 import java.nio.ByteBuffer
 
@@ -57,10 +58,12 @@ interface ImageDecryptor {
 }
 
 class ImageDecryptorImpl(
-    private val context: Context
+    private val context: Context,
+    private val secureStorage: SecureStorage
 ) : ImageDecryptor {
     override fun decrypt(imageUrl: String): ByteArray {
-        val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
+        val keyGenParameterSpec =
+            secureStorage.getKeySpec()
         val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
 
         val encryptedFile = EncryptedFile.Builder(

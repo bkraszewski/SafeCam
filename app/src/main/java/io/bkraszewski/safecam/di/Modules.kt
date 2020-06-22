@@ -34,8 +34,10 @@ val cryptoModule = module(override = true) {
 
     fun provideSecureImageUseCase(
         context: Context,
-        photoStorageLocationHolder: PhotoStorageLocationHolder): SecureImageUseCase {
-        return SecureImageUseCaseImpl(context, photoStorageLocationHolder)
+        photoStorageLocationHolder: PhotoStorageLocationHolder,
+        secureStorage: SecureStorage
+    ): SecureImageUseCase {
+        return SecureImageUseCaseImpl(context, photoStorageLocationHolder, secureStorage)
     }
 
     fun provideGetImagesUseCase(
@@ -52,7 +54,7 @@ val cryptoModule = module(override = true) {
     }
 
     single {
-        provideSecureImageUseCase(androidContext(), get())
+        provideSecureImageUseCase(androidContext(), get(), get())
     }
 
     single {
@@ -82,8 +84,9 @@ val viewModelModule = module(override = true) {
 
 val glideModule = module(override = true) {
 
-    fun provideImageDecryptor(context: Context): ImageDecryptor {
-        return ImageDecryptorImpl(context)
+    fun provideImageDecryptor(context: Context,
+                              secureStorage: SecureStorage): ImageDecryptor {
+        return ImageDecryptorImpl(context, secureStorage)
     }
 
     fun provideEncryptedModelLoaderFactory(
@@ -93,7 +96,7 @@ val glideModule = module(override = true) {
     }
 
     single {
-        provideImageDecryptor(androidContext())
+        provideImageDecryptor(androidContext(), get())
     }
     single {
         provideEncryptedModelLoaderFactory(get())

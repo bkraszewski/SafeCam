@@ -64,5 +64,15 @@
             app:layout_constraintTop_toBottomOf="@id/loginPassword"
             tools:text="@string/login_wrong_password" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:onClick="@{()-> vm.onPasswordSubmitted()}"
+            android:text="@string/login_login"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/loginPasswordError" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
