@@ -9,6 +9,9 @@ import io.bkraszewski.safecam.feature.browser.GetImagesUseCaseImpl
 import io.bkraszewski.safecam.feature.camera.CameraViewModel
 import io.bkraszewski.safecam.feature.crypto.*
 import io.bkraszewski.safecam.feature.login.LoginViewModel
+import io.bkraszewski.safecam.glide.EncryptedModelLoaderFactory
+import io.bkraszewski.safecam.glide.ImageDecryptor
+import io.bkraszewski.safecam.glide.ImageDecryptorImpl
 import io.bkraszewski.safecam.storage.SecureStorage
 import io.bkraszewski.safecam.storage.SecureStorageImpl
 import org.koin.android.ext.koin.androidContext
@@ -75,5 +78,24 @@ val viewModelModule = module(override = true) {
     viewModel {
         BrowserViewModel(get())
     }
+}
 
+val glideModule = module(override = true) {
+
+    fun provideImageDecryptor(context: Context): ImageDecryptor {
+        return ImageDecryptorImpl(context)
+    }
+
+    fun provideEncryptedModelLoaderFactory(
+        decryptor: ImageDecryptor
+    ): EncryptedModelLoaderFactory {
+        return EncryptedModelLoaderFactory(decryptor)
+    }
+
+    single {
+        provideImageDecryptor(androidContext())
+    }
+    single {
+        provideEncryptedModelLoaderFactory(get())
+    }
 }

@@ -19,6 +19,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_baseline_image_24"
+            app:encryptedImagePath="@{item}"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
