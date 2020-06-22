@@ -17,25 +17,43 @@
         <Toolbar
             android:id="@+id/browseToolbar"
             android:layout_width="match_parent"
-            tools:title="Browse"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
-            android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            tools:title="Browse">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/browseBack"
+                    android:padding="8dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="8dp"
-            app:spanCount="3"
-            tools:listitem="@layout/item_image"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:items="@{vm.items}"
             app:itemBinding="@{vm.itemBinding}"
+            app:items="@{vm.items}"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/browseToolbar" />
+            app:layout_constraintTop_toBottomOf="@id/browseToolbar"
+            app:spanCount="3"
+            tools:listitem="@layout/item_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

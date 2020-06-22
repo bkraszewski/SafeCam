@@ -7,8 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -28,9 +31,11 @@ import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
-class CameraFragment : Fragment(), MultiplePermissionsListener {
+class CameraFragment : Fragment() {
 
     private lateinit var outputDirectory: File
     private val vm: CameraViewModel by viewModel()
@@ -39,7 +44,10 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
 
+    private lateinit var cameraExecutor: ExecutorService
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        container?.removeAllViews()
         val util = DataBindingUtil.inflate<FragmentCameraBinding>(inflater, R.layout.fragment_camera, container, false)
         util.lifecycleOwner = this
         util.viewModel = vm
@@ -52,10 +60,16 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
             checkPermissions()
         }
 
-        checkPermissions()
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getOutputDirectory()
         cameraCaptureButton.setOnClickListener { takePhoto() }
         observeNavigationEvents()
+        checkPermissions()
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            requireActivity().finish()
+        }
     }
 
     private fun observeNavigationEvents() {
@@ -68,22 +82,30 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
         Dexter.withActivity(requireActivity())
             .withPermissions(Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(this)
+            .withListener(object: MultiplePermissionsListener{
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (!report.areAllPermissionsGranted()) {
+                        toast(R.string.camera_permission_denied)
+                    } else {
+                        startCamera()
+                    }
+
+                    vm.onPermissionsChecked(report.areAllPermissionsGranted())
+                }
+
+                override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
+                    token?.continuePermissionRequest()
+                }
+
+            })
             .check()
-    }
-
-    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-        if (!report.areAllPermissionsGranted()) {
-            toast(R.string.camera_permission_denied)
-        } else {
-            startCamera()
-        }
-
-        vm.onPermissionsChecked(report.areAllPermissionsGranted())
     }
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        val container = view as ConstraintLayout
+        val viewFinder1 = container.findViewById<PreviewView>(R.id.viewFinder)
+
 
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -92,7 +114,7 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
                 .build()
 
             imageCapture = ImageCapture.Builder()
-                .setTargetRotation(requireView().display.rotation)
+                //.setTargetRotation(requireView().display.rotation)
                 .build()
 
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
@@ -102,7 +124,8 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
 
                 camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
-                preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
+
+                preview?.setSurfaceProvider(viewFinder1.createSurfaceProvider())
             } catch (exc: Exception) {
                 Timber.e("Use case binding failed")
                 exc.printStackTrace()
@@ -122,7 +145,7 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
         imageCapture.takePicture(
-            outputOptions, ContextCompat.getMainExecutor(requireContext()), object : ImageCapture.OnImageSavedCallback {
+            outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
             override fun onError(exc: ImageCaptureException) {
                 Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 toast("Error saving image")
@@ -141,8 +164,11 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
         return File(requireActivity().cacheDir, resources.getString(R.string.app_name)).apply { mkdirs() }
     }
 
-    override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
-        token?.continuePermissionRequest()
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        cameraExecutor.shutdown()
+
     }
 
     companion object {

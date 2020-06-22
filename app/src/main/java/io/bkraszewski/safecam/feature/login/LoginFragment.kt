@@ -1,10 +1,8 @@
 package io.bkraszewski.safecam.feature.login
 
+import android.app.Activity
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -42,6 +40,14 @@ class LoginFragment : Fragment() {
         observePasswordSubmission()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loginPassword.requestFocus()
+        loginPassword.postDelayed({
+            showKeyboard()
+        }, 100)
+    }
+
 
     private fun hideKeyboard() {
         val view: View? = requireActivity().currentFocus
@@ -64,16 +70,12 @@ class LoginFragment : Fragment() {
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        loginPassword.requestFocus()
-        showKeyboard()
-    }
-
     private fun showKeyboard() {
-        val imm  = getInputManager()
-        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+
+        val inputMethodManager = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        requireView().requestFocus()
+        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun getInputManager() = getSystemService(requireActivity(), InputMethodManager::class.java)

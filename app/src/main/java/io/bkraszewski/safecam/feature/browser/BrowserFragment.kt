@@ -2,9 +2,9 @@ package io.bkraszewski.safecam.feature.browser
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
@@ -17,6 +17,14 @@ class BrowserFragment : Fragment() {
 
     private val vm: BrowserViewModel by viewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            navigateToCamera()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val util = DataBindingUtil.inflate<FragmentBrowseBinding>(inflater, R.layout.fragment_browse, container, false)
         util.lifecycleOwner = this
@@ -27,17 +35,15 @@ class BrowserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().setActionBar(browseToolbar)
-        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
-        setHasOptionsMenu(true)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                requireActivity().onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        browseBack.setOnClickListener {
+            navigateToCamera()
         }
     }
+
+    private fun navigateToCamera() {
+        NavHostFragment.findNavController(this).navigate(R.id.cameraFragment)
+    }
+
+
 }
