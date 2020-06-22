@@ -4,6 +4,7 @@ import com.bumptech.glide.load.model.ModelLoader
 import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import io.bkraszewski.safecam.feature.browser.SecureFile
+import io.bkraszewski.safecam.feature.crypto.ImageDecryptor
 import java.nio.ByteBuffer
 
 class EncryptedModelLoaderFactory(

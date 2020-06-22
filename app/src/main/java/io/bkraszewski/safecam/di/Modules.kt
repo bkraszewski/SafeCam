@@ -10,8 +10,6 @@ import io.bkraszewski.safecam.feature.camera.CameraViewModel
 import io.bkraszewski.safecam.feature.crypto.*
 import io.bkraszewski.safecam.feature.login.LoginViewModel
 import io.bkraszewski.safecam.glide.EncryptedModelLoaderFactory
-import io.bkraszewski.safecam.glide.ImageDecryptor
-import io.bkraszewski.safecam.glide.ImageDecryptorImpl
 import io.bkraszewski.safecam.storage.SecureStorage
 import io.bkraszewski.safecam.storage.SecureStorageImpl
 import org.koin.android.ext.koin.androidContext

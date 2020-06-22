@@ -9,7 +9,7 @@ import io.bkraszewski.safecam.feature.browser.SecureFile
 object EncryptingAdapter{
 
     @JvmStatic
-    @BindingAdapter("encryptedImagePath")
+    @BindingAdapter("encryptedImage")
     fun loadEncrypted(imageView: ImageView, secureFile: SecureFile){
         Glide.with(imageView.context)
             .load(secureFile)

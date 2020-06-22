@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.bkraszewski.safecam.feature.crypto.SecureImageUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CameraViewModel(
@@ -22,7 +23,7 @@ class CameraViewModel(
     }
 
     fun onImageCaptured(savedUri: Uri) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             secureImageUseCase.secureImage(savedUri.path!!)
         }
     }
