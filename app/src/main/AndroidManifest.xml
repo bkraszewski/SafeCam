@@ -15,7 +15,6 @@
         android:name=".BaseApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="stateVisible"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -11,14 +11,15 @@ interface SecureImageUseCase {
 }
 
 class SecureImageUseCaseImpl(
-    private val context: Context
+    private val context: Context,
+    private val photoStorageLocationHolder: PhotoStorageLocationHolder
 
 ) : SecureImageUseCase {
     override fun secureImage(inputImagePath: String): String {
         val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
         val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
         val input = File(inputImagePath)
-        val output = File(getStorageDirectory(), input.name)
+        val output = File(photoStorageLocationHolder.getStoragePath(), input.name)
 
         try {
 
@@ -44,14 +45,4 @@ class SecureImageUseCaseImpl(
 
         return output.absolutePath
     }
-
-    private fun getStorageDirectory(): String {
-        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-            File(it, context.resources.getString(R.string.app_name)).apply { mkdirs() }
-        }
-        val dir = if (mediaDir != null && mediaDir.exists())
-            mediaDir else context.filesDir
-        return dir.absolutePath
-    }
-
 }

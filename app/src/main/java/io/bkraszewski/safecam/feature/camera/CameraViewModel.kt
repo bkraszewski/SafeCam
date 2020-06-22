@@ -15,6 +15,8 @@ class CameraViewModel(
         value = false
     }
 
+    val navigateToGallery = MutableLiveData<Any>()
+
     fun onPermissionsChecked(areAllPermissionsGranted: Boolean) {
         showPermissionsError.value = !areAllPermissionsGranted
     }
@@ -23,7 +25,10 @@ class CameraViewModel(
         viewModelScope.launch {
             secureImageUseCase.secureImage(savedUri.path!!)
         }
+    }
 
+    fun onGalleryRequested() {
+        navigateToGallery.value = true
     }
 
 }

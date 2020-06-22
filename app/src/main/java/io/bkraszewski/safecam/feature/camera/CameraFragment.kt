@@ -1,7 +1,6 @@
 package io.bkraszewski.safecam.feature.camera
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +12,8 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -27,19 +28,15 @@ import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
 
-typealias LumaListener = (luma: Double) -> Unit
 
 class CameraFragment : Fragment(), MultiplePermissionsListener {
 
     private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
     private val vm: CameraViewModel by viewModel()
 
     private var preview: Preview? = null
     private var imageCapture: ImageCapture? = null
-    private var imageAnalyzer: ImageAnalysis? = null
     private var camera: Camera? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -58,7 +55,13 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
         checkPermissions()
         outputDirectory = getOutputDirectory()
         cameraCaptureButton.setOnClickListener { takePhoto() }
+        observeNavigationEvents()
+    }
 
+    private fun observeNavigationEvents() {
+        vm.navigateToGallery.observe(viewLifecycleOwner, Observer {
+            NavHostFragment.findNavController(this).navigate(R.id.browseFragment)
+        })
     }
 
     private fun checkPermissions() {
@@ -83,27 +86,20 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener(Runnable {
-            // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // Preview
             preview = Preview.Builder()
                 .build()
 
             imageCapture = ImageCapture.Builder()
-               // .setFlashMode(ImageCapture.FLASH_MODE_AUTO)
-                //.setTargetAspectRatio(AspectRatio.RATIO_4_3)
                 .setTargetRotation(requireView().display.rotation)
                 .build()
 
-            // Select back camera
             val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
             try {
-                // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
 
-                // Bind use cases to camera
                 camera = cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, imageCapture)
                 preview?.setSurfaceProvider(viewFinder.createSurfaceProvider())
@@ -116,20 +112,15 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
     }
 
     private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
-        // Create timestamped output file to hold the image
         val photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.US
             ).format(System.currentTimeMillis()) + ".jpg")
 
-        // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-        // Setup image capture listener which is triggered after photo has
-        // been taken
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(requireContext()), object : ImageCapture.OnImageSavedCallback {
             override fun onError(exc: ImageCaptureException) {
@@ -153,7 +144,6 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
         token?.continuePermissionRequest()
     }
-
 
     companion object {
         private const val TAG = "CameraXBasic"

@@ -42,10 +42,11 @@ class LoginFragment : Fragment() {
         observePasswordSubmission()
     }
 
+
     private fun hideKeyboard() {
         val view: View? = requireActivity().currentFocus
         if (view != null) {
-            val imm: InputMethodManager? = getSystemService(requireActivity(), InputMethodManager::class.java)
+            val imm: InputMethodManager? = getInputManager()
             imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
@@ -67,5 +68,13 @@ class LoginFragment : Fragment() {
         super.onResume()
 
         loginPassword.requestFocus()
+        showKeyboard()
     }
+
+    private fun showKeyboard() {
+        val imm  = getInputManager()
+        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    }
+
+    private fun getInputManager() = getSystemService(requireActivity(), InputMethodManager::class.java)
 }

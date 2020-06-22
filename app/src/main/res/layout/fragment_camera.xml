@@ -16,9 +16,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/black"
             android:elevation="3dp"
-            app:visible="@{viewModel.showPermissionsError}"
-            android:background="@color/black">
+            app:visible="@{viewModel.showPermissionsError}">
 
             <TextView
                 android:id="@+id/cameraPermissionError"
@@ -31,13 +31,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:layout_width="wrap_content"
                 android:id="@+id/cameraAllowPermission"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/white"
                 android:backgroundTint="@color/colorPrimary"
                 android:text="@string/camera_allow_permission"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cameraPermissionError" />
@@ -46,17 +46,32 @@
 
         <ImageView
             android:id="@+id/cameraCaptureButton"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_baseline_photo_camera_24"
-            android:tint="@color/white"
             android:layout_marginBottom="50dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:elevation="2dp"
             android:scaleType="fitCenter"
+            android:src="@drawable/ic_baseline_photo_camera_24"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/browseGalleryButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:elevation="2dp"
+            android:layout_marginStart="16dp"
+            android:scaleType="fitCenter"
+            android:onClick="@{()-> viewModel.onGalleryRequested()}"
+            android:src="@drawable/ic_baseline_image_24"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"

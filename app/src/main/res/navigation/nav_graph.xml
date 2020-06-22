@@ -2,8 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/loginFragment"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/browseFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -16,5 +16,17 @@
         android:name="io.bkraszewski.safecam.feature.camera.CameraFragment"
         android:label="Camera"
         tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/browseFragment"
+        android:name="io.bkraszewski.safecam.feature.browser.BrowserFragment"
+        android:label="Browse"
+
+        tools:layout="@layout/fragment_browse" >
+        <action
+            android:id="@+id/action_browseFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment"
+            app:popUpTo="@id/cameraFragment" />
+    </fragment>
 
 </navigation>

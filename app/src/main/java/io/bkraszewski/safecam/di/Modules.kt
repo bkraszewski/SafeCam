@@ -3,11 +3,11 @@ package io.bkraszewski.safecam.di
 import android.content.Context
 import io.bkraszewski.safecam.feature.StringProvider
 import io.bkraszewski.safecam.feature.StringProviderImpl
+import io.bkraszewski.safecam.feature.browser.BrowserViewModel
+import io.bkraszewski.safecam.feature.browser.GetImagesUseCase
+import io.bkraszewski.safecam.feature.browser.GetImagesUseCaseImpl
 import io.bkraszewski.safecam.feature.camera.CameraViewModel
-import io.bkraszewski.safecam.feature.crypto.SecureImageUseCase
-import io.bkraszewski.safecam.feature.crypto.SecureImageUseCaseImpl
-import io.bkraszewski.safecam.feature.crypto.UserAuthenticator
-import io.bkraszewski.safecam.feature.crypto.UserAuthenticatorImpl
+import io.bkraszewski.safecam.feature.crypto.*
 import io.bkraszewski.safecam.feature.login.LoginViewModel
 import io.bkraszewski.safecam.storage.SecureStorage
 import io.bkraszewski.safecam.storage.SecureStorageImpl
@@ -25,8 +25,19 @@ val cryptoModule = module(override = true) {
         return UserAuthenticatorImpl(secureStorage)
     }
 
-    fun provideSecureImageUseCase(context: Context): SecureImageUseCase {
-        return SecureImageUseCaseImpl(context)
+    fun providePhotoStorageLocationHolder(context: Context): PhotoStorageLocationHolder {
+        return PhotoStorageLocationHolderImpl(context)
+    }
+
+    fun provideSecureImageUseCase(
+        context: Context,
+        photoStorageLocationHolder: PhotoStorageLocationHolder): SecureImageUseCase {
+        return SecureImageUseCaseImpl(context, photoStorageLocationHolder)
+    }
+
+    fun provideGetImagesUseCase(
+        photoStorageLocationHolder: PhotoStorageLocationHolder): GetImagesUseCase {
+        return GetImagesUseCaseImpl(photoStorageLocationHolder)
     }
 
     single<SecureStorage> {
@@ -34,11 +45,19 @@ val cryptoModule = module(override = true) {
     }
 
     single {
-        provideSecureImageUseCase(androidContext())
+        providePhotoStorageLocationHolder(androidContext())
+    }
+
+    single {
+        provideSecureImageUseCase(androidContext(), get())
     }
 
     single {
         provideUserAuthenticator(get())
+    }
+
+    single {
+        provideGetImagesUseCase(get())
     }
 }
 
@@ -51,6 +70,10 @@ val viewModelModule = module(override = true) {
 
     viewModel {
         CameraViewModel(get<SecureImageUseCase>())
+    }
+
+    viewModel {
+        BrowserViewModel(get())
     }
 
 }
