@@ -140,17 +140,14 @@ class CameraFragment : Fragment(), MultiplePermissionsListener {
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 val savedUri = Uri.fromFile(photoFile)
                 val msg = "Photo capture succeeded: $savedUri"
+                vm.onImageCaptured(savedUri)
                 toast(msg)
             }
         })
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = requireActivity().externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() }
-        }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else requireActivity().filesDir
+        return File(requireActivity().cacheDir, resources.getString(R.string.app_name)).apply { mkdirs() }
     }
 
     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {

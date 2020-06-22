@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import io.bkraszewski.safecam.R
 import io.bkraszewski.safecam.feature.StringProvider
 import io.bkraszewski.safecam.feature.crypto.UserAuthenticator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(

@@ -1,8 +1,11 @@
 package io.bkraszewski.safecam.di
 
+import android.content.Context
 import io.bkraszewski.safecam.feature.StringProvider
 import io.bkraszewski.safecam.feature.StringProviderImpl
 import io.bkraszewski.safecam.feature.camera.CameraViewModel
+import io.bkraszewski.safecam.feature.crypto.SecureImageUseCase
+import io.bkraszewski.safecam.feature.crypto.SecureImageUseCaseImpl
 import io.bkraszewski.safecam.feature.crypto.UserAuthenticator
 import io.bkraszewski.safecam.feature.crypto.UserAuthenticatorImpl
 import io.bkraszewski.safecam.feature.login.LoginViewModel
@@ -22,8 +25,16 @@ val cryptoModule = module(override = true) {
         return UserAuthenticatorImpl(secureStorage)
     }
 
+    fun provideSecureImageUseCase(context: Context): SecureImageUseCase {
+        return SecureImageUseCaseImpl(context)
+    }
+
     single<SecureStorage> {
         SecureStorageImpl(androidContext())
+    }
+
+    single {
+        provideSecureImageUseCase(androidContext())
     }
 
     single {
@@ -39,6 +50,7 @@ val viewModelModule = module(override = true) {
     }
 
     viewModel {
-        CameraViewModel()
+        CameraViewModel(get<SecureImageUseCase>())
     }
+
 }
