@@ -15,7 +15,7 @@ AndroidX if possible - that's all the requirements -> all the other decisions sh
 
 Basic architecture.
 I'm using koin for dependency injections, with modules:
-- app module - sommon stuff
+- app module - common stuff
 - crypto module - cryptography related classes
 - viewmodel module - viewmodels
 - glide module - classess required by glide custom decoder.
